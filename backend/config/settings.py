@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     "apps.appointments",
     "apps.visits",
     "apps.prescriptions",
+    "apps.uploads",
+    "apps.billing",
 
 ]
 AUTH_USER_MODEL = "accounts.User"
@@ -154,3 +156,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = "/app/media"
