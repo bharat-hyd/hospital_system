@@ -14,6 +14,19 @@ services:
       - .env
     depends_on:
       - postgres
+      - redis
+
+  celery:
+    build: .
+    container_name: celery
+    command: celery -A config worker -l info
+    volumes:
+      - ./backend:/app
+    env_file:
+      - .env
+    depends_on:
+      - django
+      - redis
 
   postgres:
     image: postgres:15
@@ -24,3 +37,7 @@ services:
       POSTGRES_PASSWORD: hospital_pass
     ports:
       - "5432:5432"
+
+  redis:
+    image: redis:7
+    container_name: redis
