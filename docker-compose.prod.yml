@@ -1,0 +1,53 @@
+version: "3.9"
+
+services:
+
+  django:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    container_name: django
+    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - ./backend:/app
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - redis
+
+  celery:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    container_name: celery
+    command: celery -A config worker -l info
+    volumes:
+      - ./backend:/app
+    env_file:
+      - .env
+    depends_on:
+      - django
+      - redis
+
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_DB: hospital_db
+      POSTGRES_USER: hospital_user
+      POSTGRES_PASSWORD: hospital_pass
+
+  redis:
+    image: redis:7
+    container_name: redis
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - django
